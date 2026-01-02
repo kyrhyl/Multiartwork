@@ -11,18 +11,49 @@ const EXPERTISE_CARDS = [
     title: 'Custom Signage',
     description: 'High-impact indoor and outdoor signage. From lighted acrylic boxes to 3D channel letters that define your brand.',
     features: ['3D Built-up Letters', 'Lightbox Signage', 'Wayfinding Systems'],
+    image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&q=80' // Neon signage
   },
   {
     icon: '🔧',
     title: 'Steel Fabrication',
     description: 'Heavy-duty metalworks for structural and aesthetic purposes. Precision welding for gates, railings, and frames.',
     features: ['Gates & Railings', 'Structural Welding', 'Custom Metal Furniture'],
+    image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80' // Welding sparks
   },
   {
     icon: '🖨️',
     title: 'Professional Printing',
     description: 'Large format printing solutions for advertising and decor. High-res colors and weather-resistant materials.',
     features: ['Tarpaulins & Banners', 'Vinyl Stickers', 'Vehicle Wraps'],
+    image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=600&q=80' // Large format printer
+  },
+];
+
+const PORTFOLIO_PROJECTS = [
+  {
+    title: 'Corporate Headquarters',
+    category: 'Signage',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80' // Modern building signage
+  },
+  {
+    title: 'Custom Gates',
+    category: 'Fabrication',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80' // Ornate metal gates
+  },
+  {
+    title: 'Retail Glow',
+    category: 'Signage',
+    image: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=800&q=80' // Neon retail sign
+  },
+  {
+    title: 'Fleet Branding',
+    category: 'Printing',
+    image: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&q=80' // Van with branding
+  },
+  {
+    title: 'Warehouse Beams',
+    category: 'Fabrication',
+    image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80' // Industrial steel structure
   },
 ];
 
@@ -34,9 +65,6 @@ const TRUSTED_BY = [
 ];
 
 export default function Home() {
-  const { data: projects } = useSWR('/api/posts', fetcher);
-  const featuredProjects = Array.isArray(projects) ? projects.slice(0, 5) : [];
-
   return (
     <main>
       {/* Hero Section */}
@@ -70,27 +98,32 @@ export default function Home() {
           <div className="section-header">
             <h2>Our Expertise</h2>
             <p>We combine industrial precision with creative design to deliver comprehensive branding solutions.</p>
-            <Link href="/services">
-              <a className="view-all">View all Services →</a>
+            <Link href="/services" className="view-all">
+              View all Services →
             </Link>
           </div>
 
           <div className="expertise-grid">
             {EXPERTISE_CARDS.map((card, idx) => (
               <div key={idx} className="expertise-card">
-                <div className="card-icon">{card.icon}</div>
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
-                <ul className="features-list">
-                  {card.features.map((feature, i) => (
-                    <li key={i}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M13.3334 4L6.00008 11.3333L2.66675 8" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+                <div className="card-image">
+                  <img src={card.image} alt={card.title} />
+                  <div className="card-icon-overlay">{card.icon}</div>
+                </div>
+                <div className="card-content">
+                  <h3>{card.title}</h3>
+                  <p>{card.description}</p>
+                  <ul className="features-list">
+                    {card.features.map((feature, i) => (
+                      <li key={i}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M13.3334 4L6.00008 11.3333L2.66675 8" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             ))}
           </div>
@@ -107,59 +140,20 @@ export default function Home() {
           </div>
 
           <div className="portfolio-grid">
-            {featuredProjects.length > 0 ? (
-              featuredProjects.map((project, idx) => (
-                <div key={project._id} className={`portfolio-item ${idx === 0 ? 'large' : ''}`}>
-                  {project.imageUrl ? (
-                    <img src={project.imageUrl} alt={project.title} />
-                  ) : (
-                    <div className="placeholder-image">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <polyline points="21 15 16 10 5 21" />
-                      </svg>
-                    </div>
-                  )}
-                  <div className="portfolio-overlay">
-                    <h3>{project.title || 'Project'}</h3>
-                  </div>
+            {PORTFOLIO_PROJECTS.map((project, idx) => (
+              <div key={idx} className={`portfolio-item ${idx === 0 ? 'large' : ''}`}>
+                <img src={project.image} alt={project.title} />
+                <div className="portfolio-overlay">
+                  <h3>{project.title}</h3>
+                  <span className="category">{project.category}</span>
                 </div>
-              ))
-            ) : (
-              <>
-                <div className="portfolio-item large">
-                  <div className="placeholder-image" style={{background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)'}}>
-                    <h3 style={{color: '#666', fontSize: '1.5rem'}}>Corporate Headquarters</h3>
-                  </div>
-                </div>
-                <div className="portfolio-item">
-                  <div className="placeholder-image" style={{background: 'linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)'}}>
-                    <h3 style={{color: '#666'}}>Custom Gates</h3>
-                  </div>
-                </div>
-                <div className="portfolio-item">
-                  <div className="placeholder-image" style={{background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)'}}>
-                    <h3 style={{color: '#666'}}>Retail Glow</h3>
-                  </div>
-                </div>
-                <div className="portfolio-item">
-                  <div className="placeholder-image" style={{background: 'linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)'}}>
-                    <h3 style={{color: '#666'}}>Fleet Branding</h3>
-                  </div>
-                </div>
-                <div className="portfolio-item">
-                  <div className="placeholder-image" style={{background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)'}}>
-                    <h3 style={{color: '#666'}}>Warehouse Beams</h3>
-                  </div>
-                </div>
-              </>
-            )}
+              </div>
+            ))}
           </div>
 
-          <div className="view-all-projects">
+          <div className="portfolio-cta">
             <Link href="/portfolio">
-              <Button variant="outline" size="large">View All Projects</Button>
+              <Button variant="primary" size="large">View All Projects</Button>
             </Link>
           </div>
         </div>
@@ -209,7 +203,7 @@ export default function Home() {
               <div className="cta-box">
                 <p>Ready to start your project?</p>
                 <Link href="/contact">
-                  <Button variant="primary" fullWidth>Request Consultation</Button>
+                  <Button variant="light" size="large">Request Consultation</Button>
                 </Link>
               </div>
             </div>
@@ -220,29 +214,26 @@ export default function Home() {
       <style jsx>{`
         .hero {
           position: relative;
+          width: 100%;
           min-height: 600px;
-          background: #0A0A0A;
+          overflow: hidden;
         }
 
         .hero-image {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%231a1a1a" width="1200" height="600"/><circle cx="900" cy="200" r="300" fill="%23252525" opacity="0.3"/></svg>') center/cover;
-          background-color: #1a1a1a;
+          position: relative;
+          width: 100%;
+          height: 100%;
+          min-height: 600px;
+          background: url('https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1600&q=80') center center/cover;
         }
 
         .hero-overlay {
           position: absolute;
           top: 0;
           left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
-          display: flex;
-          align-items: center;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.5) 100%);
         }
 
         .hero-content {
@@ -263,7 +254,7 @@ export default function Home() {
         .hero-subtitle {
           font-size: 1.25rem;
           line-height: 1.6;
-          color: #C0C0C0;
+          color: #E5E7EB;
           margin: 0 0 40px 0;
           max-width: 600px;
         }
@@ -276,7 +267,7 @@ export default function Home() {
 
         .expertise {
           padding: 100px 0;
-          background: #0A0A0A;
+          background: #F9FAFB;
         }
 
         .section-header {
@@ -290,13 +281,13 @@ export default function Home() {
         .section-header h2 {
           font-size: clamp(2rem, 4vw, 2.5rem);
           font-weight: 700;
-          color: #FFFFFF;
+          color: #111827;
           margin: 0 0 16px 0;
         }
 
         .section-header p {
           font-size: 1.125rem;
-          color: #A0A0A0;
+          color: #6B7280;
           max-width: 600px;
         }
 
@@ -307,19 +298,19 @@ export default function Home() {
         .view-all {
           display: inline-block;
           margin-top: 16px;
-          color: ${theme.colors.primary};
+          color: #2563EB;
           font-weight: 500;
           text-decoration: none;
           transition: color 0.3s ease;
         }
 
         .view-all:hover {
-          color: ${theme.colors.accent};
+          color: #1D4ED8;
         }
 
         .eyebrow {
           display: block;
-          color: ${theme.colors.accent};
+          color: #2563EB;
           font-size: 0.875rem;
           font-weight: 600;
           letter-spacing: 1px;
@@ -334,40 +325,63 @@ export default function Home() {
         }
 
         .expertise-card {
-          background: #1A1A1A;
-          border: 1px solid #2A2A2A;
+          background: #FFFFFF;
+          border: 1px solid #E5E7EB;
           border-radius: 16px;
-          padding: 40px;
+          overflow: hidden;
           transition: all 0.3s ease;
         }
 
         .expertise-card:hover {
           transform: translateY(-4px);
-          border-color: ${theme.colors.primary};
-          box-shadow: 0 12px 40px rgba(0, 102, 255, 0.15);
+          box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15);
         }
 
-        .card-icon {
-          width: 64px;
-          height: 64px;
-          background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 212, 255, 0.1));
+        .card-image {
+          position: relative;
+          width: 100%;
+          height: 220px;
+          overflow: hidden;
+        }
+
+        .card-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+        }
+
+        .expertise-card:hover .card-image img {
+          transform: scale(1.05);
+        }
+
+        .card-icon-overlay {
+          position: absolute;
+          bottom: 16px;
+          left: 16px;
+          width: 56px;
+          height: 56px;
+          background: #2563EB;
           border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 2rem;
-          margin-bottom: 24px;
+          font-size: 1.75rem;
         }
 
-        .expertise-card h3 {
+        .card-content {
+          padding: 32px;
+        }
+
+        .card-content h3 {
           font-size: 1.5rem;
           font-weight: 700;
-          color: #FFFFFF;
+          color: #111827;
           margin: 0 0 12px 0;
         }
 
-        .expertise-card p {
-          color: #A0A0A0;
+        .card-content p {
+          color: #6B7280;
           line-height: 1.6;
           margin: 0 0 24px 0;
         }
@@ -382,7 +396,7 @@ export default function Home() {
           display: flex;
           align-items: center;
           gap: 12px;
-          color: #E0E0E0;
+          color: #374151;
           font-size: 0.9375rem;
           margin-bottom: 12px;
         }
@@ -393,7 +407,7 @@ export default function Home() {
 
         .portfolio-showcase {
           padding: 100px 0;
-          background: #0F0F0F;
+          background: #F9FAFB;
         }
 
         .portfolio-grid {
@@ -421,19 +435,10 @@ export default function Home() {
           transform: scale(1.02);
         }
 
-        .portfolio-item img,
-        .placeholder-image {
+        .portfolio-item img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-        }
-
-        .placeholder-image {
-          background: #1A1A1A;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #404040;
         }
 
         .portfolio-overlay {
@@ -453,18 +458,23 @@ export default function Home() {
         }
 
         .portfolio-overlay h3 {
-          margin: 0;
+          margin: 0 0 4px 0;
           font-size: 1.25rem;
           font-weight: 600;
         }
 
-        .view-all-projects {
+        .portfolio-overlay .category {
+          font-size: 0.875rem;
+          color: #D1D5DB;
+        }
+
+        .portfolio-cta {
           text-align: center;
         }
 
         .why-choose {
           padding: 100px 0;
-          background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+          background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%);
         }
 
         .why-choose-grid {
@@ -490,12 +500,12 @@ export default function Home() {
         .benefit-icon {
           width: 48px;
           height: 48px;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.15);
           border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: ${theme.colors.accent};
+          color: white;
           flex-shrink: 0;
         }
 
@@ -507,7 +517,7 @@ export default function Home() {
         }
 
         .benefit p {
-          color: rgba(255, 255, 255, 0.8);
+          color: #E5E7EB;
           line-height: 1.6;
           margin: 0;
         }
@@ -520,10 +530,11 @@ export default function Home() {
         }
 
         .trusted-by h3 {
-          font-size: 1.25rem;
+          font-size: 1.125rem;
           font-weight: 600;
           color: #FFFFFF;
           margin: 0 0 24px 0;
+          text-align: center;
         }
 
         .trusted-logos {
@@ -541,11 +552,12 @@ export default function Home() {
           text-align: center;
           font-size: 0.75rem;
           font-weight: 600;
-          color: rgba(255, 255, 255, 0.9);
+          color: #E5E7EB;
+          letter-spacing: 0.5px;
         }
 
         .cta-box {
-          background: rgba(0, 0, 0, 0.2);
+          background: rgba(255, 255, 255, 0.15);
           border-radius: 12px;
           padding: 24px;
           text-align: center;
@@ -553,7 +565,7 @@ export default function Home() {
 
         .cta-box p {
           color: #FFFFFF;
-          font-weight: 500;
+          font-size: 1rem;
           margin: 0 0 16px 0;
         }
 
