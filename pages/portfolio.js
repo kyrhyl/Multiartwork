@@ -19,10 +19,12 @@ export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState('all');
   const { data: posts, error } = useSWR('/api/posts', fetcher);
 
-  const filteredProjects = posts?.filter(post => {
-    if (activeCategory === 'all') return true;
-    return post.category?.toLowerCase() === activeCategory;
-  }) || [];
+  const filteredProjects = Array.isArray(posts) 
+    ? posts.filter(post => {
+        if (activeCategory === 'all') return true;
+        return post.category?.toLowerCase() === activeCategory;
+      }) 
+    : [];
 
   return (
     <main>
