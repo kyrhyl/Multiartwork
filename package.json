@@ -1,0 +1,31 @@
+{
+  "name": "multiartwork-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "seed": "node scripts/seedUsers.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.33.0",
+    "dotenv": "^16.1.4",
+    "cookie": "^0.5.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.5.0",
+    "next": "13.5.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-quill": "^2.0.0",
+    "swr": "^2.2.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.1",
+    "supertest": "^6.3.3",
+    "mongodb-memory-server": "^8.12.1"
+  }
+}
