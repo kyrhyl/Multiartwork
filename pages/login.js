@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Router from 'next/router';
 import { theme } from '../styles/theme';
 
@@ -7,6 +7,23 @@ export default function Login(){
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [dbStatus, setDbStatus] = useState({ status: 'checking', message: 'Checking...' });
+
+  useEffect(() => {
+    // Check database connection on mount
+    fetch('/api/health')
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          setDbStatus({ status: 'connected', message: 'Database Connected' });
+        } else {
+          setDbStatus({ status: 'error', message: 'Database Error' });
+        }
+      })
+      .catch(() => {
+        setDbStatus({ status: 'error', message: 'Connection Failed' });
+      });
+  }, []);
 
   async function submit(e){
     e.preventDefault();
@@ -37,6 +54,11 @@ export default function Login(){
   return (
     <div className="auth-container">
       <form className="auth-form" onSubmit={submit}>
+        <div className="status-indicator">
+          <span className={`status-dot ${dbStatus.status}`}></span>
+          <span className="status-text">{dbStatus.message}</span>
+        </div>
+
         <h2>Admin Sign In</h2>
         <p className="subtitle">Enter your credentials to access the admin panel</p>
         
@@ -90,6 +112,47 @@ export default function Login(){
         .auth-form {
           background: #1A1A1A;
           border: 1px solid #2A2A2A;
+          position: relative;
+        }
+
+        .status-indicator {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.8125rem;
+        }
+
+        .status-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.checking {
+          background: #FFA500;
+        }
+
+        .status-dot.connected {
+          background: #00FF66;
+        }
+
+        .status-dot.error {
+          background: #FF4444;
+          animation: none;
+        }
+
+        .status-text {
+          color: #A0A0A0;
+          font-size: 0.875rem;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
           border-radius: 16px;
           padding: 48px;
           width: 100%;
