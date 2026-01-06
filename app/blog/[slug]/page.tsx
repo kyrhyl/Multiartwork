@@ -9,7 +9,11 @@ interface PageProps {
 }
 
 async function getPost(slug: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api'}/posts/${slug}`, {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000';
+    
+  const response = await fetch(`${baseUrl}/api/posts/${slug}`, {
     cache: 'no-store',
   });
 
