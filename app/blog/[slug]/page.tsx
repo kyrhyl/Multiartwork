@@ -32,6 +32,7 @@ async function getPost(slug: string) {
       coverImage: post.coverImageUrl,
       publishedAt: post.publishedAt?.toISOString(),
       author: post.author,
+      tags: post.tags || [],
     };
   } catch (error) {
     console.error('Error fetching post:', error);
