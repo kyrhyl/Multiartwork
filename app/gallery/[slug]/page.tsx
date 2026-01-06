@@ -2,6 +2,9 @@ import { PublicLayout } from '@/shared/layout/PublicLayout';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { connectDB } from '@/lib/db';
+import { GalleryAlbumModel } from '@/lib/models/GalleryAlbum';
+import { GalleryImageModel } from '@/lib/models/GalleryImage';
 
 interface PageProps {
   params: Promise<{
@@ -10,21 +13,32 @@ interface PageProps {
 }
 
 async function getAlbum(slug: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : 'http://localhost:3000';
-  
   try {
-    const res = await fetch(`${baseUrl}/api/gallery/albums/${slug}`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
+    await connectDB();
+    
+    const album = await GalleryAlbumModel.findOne({ slug }).lean();
+    
+    if (!album) {
       return null;
     }
 
-    const data = await res.json();
-    return data.album;
+    // Fetch images for this album
+    const images = await GalleryImageModel.find({ albumId: album._id })
+      .sort({ sortOrder: 1 })
+      .lean();
+
+    return {
+      ...album,
+      _id: album._id.toString(),
+      images: images.map(img => ({
+        _id: img._id.toString(),
+        imageUrl: img.imageUrl,
+        thumbUrl: img.thumbUrl,
+        caption: img.caption,
+        altText: img.altText,
+        sortOrder: img.sortOrder,
+      })),
+    };
   } catch (error) {
     console.error('Error fetching album:', error);
     return null;

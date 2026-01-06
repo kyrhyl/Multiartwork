@@ -1,6 +1,8 @@
 import { PublicLayout } from '@/shared/layout/PublicLayout';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import { connectDB } from '@/lib/db';
+import { PostModel } from '@/lib/models/Post';
 
 interface PageProps {
   params: Promise<{
@@ -9,20 +11,32 @@ interface PageProps {
 }
 
 async function getPost(slug: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : 'http://localhost:3000';
+  try {
+    await connectDB();
     
-  const response = await fetch(`${baseUrl}/api/posts/${slug}`, {
-    cache: 'no-store',
-  });
+    const post = await PostModel.findOne({ 
+      slug, 
+      status: 'published' 
+    }).lean();
+    
+    if (!post) {
+      return null;
+    }
 
-  if (!response.ok) {
+    return {
+      _id: post._id.toString(),
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.contentHtml,
+      coverImage: post.coverImageUrl,
+      publishedAt: post.publishedAt?.toISOString(),
+      author: post.author,
+    };
+  } catch (error) {
+    console.error('Error fetching post:', error);
     return null;
   }
-
-  const data = await response.json();
-  return data.post;
 }
 
 export async function generateMetadata({ params }: PageProps) {
