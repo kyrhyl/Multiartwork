@@ -28,5 +28,12 @@ export async function getSiteSettingsServer() {
     contactEmail: settings.contactEmail,
     contactPhone: settings.contactPhone,
     socialLinks: settings.socialLinks || [],
+    navigationItems: settings.navigationItems || [
+      { label: 'Home', href: '/' },
+      { label: 'Gallery', href: '/gallery' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
+    ],
   };
 }

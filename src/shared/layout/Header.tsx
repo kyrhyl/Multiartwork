@@ -1,33 +1,17 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import { getSiteSettingsServer } from '@/features/settings/api/server/getSiteSettings';
 
-interface NavigationItem {
-  label: string;
-  href: string;
-}
-
-export function Header() {
-  const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([
+export async function Header() {
+  const settings = await getSiteSettingsServer();
+  
+  const navigationItems = settings.navigationItems || [
     { label: 'Home', href: '/' },
     { label: 'Gallery', href: '/gallery' },
     { label: 'Blog', href: '/blog' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
-  ]);
-
-  useEffect(() => {
-    // Fetch navigation items from settings
-    fetch('/api/settings')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.settings?.navigationItems) {
-          setNavigationItems(data.settings.navigationItems);
-        }
-      })
-      .catch((err) => console.error('Failed to fetch navigation:', err));
-  }, []);
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 dark:bg-[#101622]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
@@ -43,7 +27,7 @@ export function Header() {
         </Link>
         
         <div className="hidden md:flex items-center gap-9">
-          {navigationItems.map((item) => (
+          {navigationItems.map((item: { label: string; href: string }) => (
             <Link
               key={item.href}
               href={item.href}
