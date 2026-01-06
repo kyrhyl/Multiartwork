@@ -37,6 +37,8 @@ export function ImageUpload({ label, currentImage, onUpload, disabled = false }:
       const formData = new FormData();
       formData.append('file', file);
 
+      console.log('Uploading image:', file.name, 'Size:', file.size);
+
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
@@ -45,11 +47,14 @@ export function ImageUpload({ label, currentImage, onUpload, disabled = false }:
       const data = await response.json();
 
       if (!response.ok) {
+        console.error('Upload failed:', data);
         throw new Error(data.error?.message || 'Upload failed');
       }
 
+      console.log('Upload successful:', data.url);
       onUpload(data.url);
     } catch (err) {
+      console.error('Upload error:', err);
       setError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setIsUploading(false);

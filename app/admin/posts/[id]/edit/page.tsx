@@ -1,11 +1,12 @@
 import { EditPostContainer } from '@/features/blog/containers/EditPostContainer';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function EditPostPage({ params }: PageProps) {
-  return <EditPostContainer postId={params.id} />;
+export default async function EditPostPage({ params }: PageProps) {
+  const { id } = await params;
+  return <EditPostContainer postId={id} />;
 }

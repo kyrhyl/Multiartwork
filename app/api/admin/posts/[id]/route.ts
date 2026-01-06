@@ -37,7 +37,15 @@ export async function GET(request: NextRequest, { params }: Params) {
       );
     }
 
-    return NextResponse.json({ success: true, post });
+    // Map database fields to API response fields
+    const postResponse = {
+      ...post,
+      _id: post._id.toString(),
+      content: post.contentHtml,
+      featuredImage: post.coverImageUrl || '',
+    };
+
+    return NextResponse.json({ success: true, post: postResponse });
   } catch (error) {
     console.error('Error fetching post:', error);
     return NextResponse.json(
@@ -87,8 +95,17 @@ export async function PUT(request: NextRequest, { params }: Params) {
       }
     }
 
-    // Update publishedAt if status changes to published
-    const updateData: any = { ...validation.data };
+    // Map API fields to database fields and update publishedAt if status changes to published
+    const updateData: any = {
+      title: validation.data.title,
+      slug: validation.data.slug,
+      excerpt: validation.data.excerpt || '',
+      contentHtml: validation.data.content,
+      coverImageUrl: validation.data.featuredImage,
+      tags: validation.data.tags || [],
+      status: validation.data.status,
+    };
+    
     if (validation.data.status === 'published' && existingPost.status !== 'published') {
       updateData.publishedAt = new Date();
     }
@@ -96,9 +113,17 @@ export async function PUT(request: NextRequest, { params }: Params) {
     const post = await PostModel.findByIdAndUpdate(resolvedParams.id, updateData, {
       new: true,
       runValidators: true,
-    });
+    }).lean();
 
-    return NextResponse.json({ success: true, post });
+    // Map database fields to API response fields
+    const postResponse = {
+      ...post,
+      _id: post!._id.toString(),
+      content: post!.contentHtml,
+      featuredImage: post!.coverImageUrl || '',
+    };
+
+    return NextResponse.json({ success: true, post: postResponse });
   } catch (error) {
     console.error('Error updating post:', error);
     return NextResponse.json(

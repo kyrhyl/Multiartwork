@@ -89,7 +89,9 @@ export function EditPostContainer({ postId }: EditPostContainerProps) {
       }
 
       setSuccessMessage('Post updated successfully!');
-      setTimeout(() => setSuccessMessage(null), 3000);
+      setTimeout(() => {
+        router.push('/admin/posts');
+      }, 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {

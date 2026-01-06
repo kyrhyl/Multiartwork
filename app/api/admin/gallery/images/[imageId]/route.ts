@@ -4,8 +4,8 @@ import { GalleryImageModel } from '@/lib/models/GalleryImage';
 import { z } from 'zod';
 
 const imageUpdateSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
+  caption: z.string().optional(),
+  altText: z.string().optional(),
   order: z.number().int().min(0).optional(),
 });
 
@@ -35,10 +35,16 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
     await connectDB();
 
-    const image = await GalleryImageModel.findByIdAndUpdate(resolvedParams.imageId, validation.data, {
+    // Map API fields to database fields
+    const updateData: any = {};
+    if (validation.data.caption !== undefined) updateData.caption = validation.data.caption;
+    if (validation.data.altText !== undefined) updateData.altText = validation.data.altText;
+    if (validation.data.order !== undefined) updateData.sortOrder = validation.data.order;
+
+    const image = await GalleryImageModel.findByIdAndUpdate(resolvedParams.imageId, updateData, {
       new: true,
       runValidators: true,
-    });
+    }).lean();
 
     if (!image) {
       return NextResponse.json(
@@ -47,7 +53,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
       );
     }
 
-    return NextResponse.json({ success: true, image });
+    // Map response
+    const imageResponse = {
+      ...image,
+      _id: image._id.toString(),
+      order: image.sortOrder,
+    };
+
+    return NextResponse.json({ success: true, image: imageResponse });
   } catch (error) {
     console.error('Error updating image:', error);
     return NextResponse.json(

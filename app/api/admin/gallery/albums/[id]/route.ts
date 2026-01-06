@@ -38,16 +38,23 @@ export async function GET(request: NextRequest, { params }: Params) {
 
     // Fetch images for this album
     const images = await GalleryImageModel.find({ albumId: album._id })
-      .sort({ order: 1 })
+      .sort({ sortOrder: 1 })
       .lean();
 
-    return NextResponse.json({
-      success: true,
-      album: {
-        ...album,
-        images,
-      },
-    });
+    // Map database fields to API response fields
+    const albumResponse = {
+      ...album,
+      _id: album._id.toString(),
+      coverImage: album.coverImageUrl,
+      order: album.sortOrder,
+      images: images.map(img => ({
+        ...img,
+        _id: img._id.toString(),
+        order: img.sortOrder,
+      })),
+    };
+
+    return NextResponse.json({ success: true, album: albumResponse });
   } catch (error) {
     console.error('Error fetching album:', error);
     return NextResponse.json(
@@ -97,12 +104,29 @@ export async function PUT(request: NextRequest, { params }: Params) {
       }
     }
 
-    const album = await GalleryAlbumModel.findByIdAndUpdate(resolvedParams.id, validation.data, {
+    // Map API fields to database fields
+    const updateData = {
+      title: validation.data.title,
+      slug: validation.data.slug,
+      description: validation.data.description || '',
+      coverImageUrl: validation.data.coverImage,
+      sortOrder: validation.data.order,
+    };
+
+    const album = await GalleryAlbumModel.findByIdAndUpdate(resolvedParams.id, updateData, {
       new: true,
       runValidators: true,
-    });
+    }).lean();
 
-    return NextResponse.json({ success: true, album });
+    // Map response back to API fields
+    const albumResponse = {
+      ...album,
+      _id: album!._id.toString(),
+      coverImage: album!.coverImageUrl,
+      order: album!.sortOrder,
+    };
+
+    return NextResponse.json({ success: true, album: albumResponse });
   } catch (error) {
     console.error('Error updating album:', error);
     return NextResponse.json(

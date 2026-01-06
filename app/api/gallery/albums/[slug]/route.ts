@@ -29,16 +29,23 @@ export async function GET(request: NextRequest, { params }: Params) {
 
     // Fetch images for this album
     const images = await GalleryImageModel.find({ albumId: album._id })
-      .sort({ order: 1 })
+      .sort({ sortOrder: 1 })
       .lean();
 
-    return NextResponse.json({
-      success: true,
-      album: {
-        ...album,
-        images,
-      },
-    });
+    // Map database fields to API response fields
+    const albumResponse = {
+      ...album,
+      _id: album._id.toString(),
+      coverImage: album.coverImageUrl,
+      order: album.sortOrder,
+      images: images.map(img => ({
+        ...img,
+        _id: img._id.toString(),
+        order: img.sortOrder,
+      })),
+    };
+
+    return NextResponse.json({ success: true, album: albumResponse });
   } catch (error) {
     console.error('Error fetching album:', error);
     return NextResponse.json(

@@ -1,11 +1,12 @@
 import { EditAlbumContainer } from '@/features/gallery/containers/EditAlbumContainer';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function EditAlbumPage({ params }: PageProps) {
-  return <EditAlbumContainer albumId={params.id} />;
+export default async function EditAlbumPage({ params }: PageProps) {
+  const { id } = await params;
+  return <EditAlbumContainer albumId={id} />;
 }

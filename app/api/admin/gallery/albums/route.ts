@@ -19,9 +19,17 @@ export async function GET() {
   try {
     await connectDB();
 
-    const albums = await GalleryAlbumModel.find().sort({ order: 1 }).lean();
+    const albums = await GalleryAlbumModel.find().sort({ sortOrder: 1 }).lean();
 
-    return NextResponse.json({ success: true, albums });
+    // Map database fields to API response fields
+    const albumsResponse = albums.map(album => ({
+      ...album,
+      _id: album._id.toString(),
+      coverImage: album.coverImageUrl,
+      order: album.sortOrder,
+    }));
+
+    return NextResponse.json({ success: true, albums: albumsResponse });
   } catch (error) {
     console.error('Error fetching albums:', error);
     return NextResponse.json(
@@ -59,9 +67,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const album = await GalleryAlbumModel.create(validation.data);
+    // Map API fields to database fields
+    const albumData = {
+      title: validation.data.title,
+      slug: validation.data.slug,
+      description: validation.data.description || '',
+      coverImageUrl: validation.data.coverImage,
+      sortOrder: validation.data.order,
+    };
 
-    return NextResponse.json({ success: true, album }, { status: 201 });
+    const album = await GalleryAlbumModel.create(albumData);
+
+    // Map response back to API fields
+    const albumResponse = {
+      ...album.toObject(),
+      _id: album._id.toString(),
+      coverImage: album.coverImageUrl,
+      order: album.sortOrder,
+    };
+
+    return NextResponse.json({ success: true, album: albumResponse }, { status: 201 });
   } catch (error) {
     console.error('Error creating album:', error);
     return NextResponse.json(

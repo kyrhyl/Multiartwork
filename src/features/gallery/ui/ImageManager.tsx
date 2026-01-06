@@ -7,8 +7,8 @@ import { InputField, TextAreaField } from '@/shared/ui/FormFields';
 interface GalleryImage {
   _id: string;
   imageUrl: string;
-  title?: string;
-  description?: string;
+  caption?: string;
+  altText?: string;
   order: number;
 }
 
@@ -22,7 +22,7 @@ export function ImageManager({ albumId, images, onRefresh }: ImageManagerProps) 
   const [isAdding, setIsAdding] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [editingImage, setEditingImage] = useState<string | null>(null);
-  const [editData, setEditData] = useState({ title: '', description: '' });
+  const [editData, setEditData] = useState({ caption: '', altText: '' });
   const [newImageUrl, setNewImageUrl] = useState('');
 
   const handleAddImage = async () => {
@@ -118,7 +118,7 @@ export function ImageManager({ albumId, images, onRefresh }: ImageManagerProps) 
                 <div className="aspect-square bg-gray-100">
                   <img
                     src={image.imageUrl}
-                    alt={image.title || 'Gallery image'}
+                    alt={image.caption || 'Gallery image'}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -127,15 +127,15 @@ export function ImageManager({ albumId, images, onRefresh }: ImageManagerProps) 
                     <div className="space-y-2">
                       <input
                         type="text"
-                        value={editData.title}
-                        onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                        placeholder="Image title"
+                        value={editData.caption}
+                        onChange={(e) => setEditData({ ...editData, caption: e.target.value })}
+                        placeholder="Image caption"
                         className="w-full px-3 py-2 border rounded text-sm"
                       />
                       <textarea
-                        value={editData.description}
-                        onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                        placeholder="Image description"
+                        value={editData.altText}
+                        onChange={(e) => setEditData({ ...editData, altText: e.target.value })}
+                        placeholder="Alt text for accessibility"
                         rows={2}
                         className="w-full px-3 py-2 border rounded text-sm"
                       />
@@ -156,13 +156,13 @@ export function ImageManager({ albumId, images, onRefresh }: ImageManagerProps) 
                     </div>
                   ) : (
                     <>
-                      {image.title && <p className="font-medium text-sm mb-1">{image.title}</p>}
-                      {image.description && <p className="text-xs text-gray-500 mb-2">{image.description}</p>}
+                      {image.caption && <p className="font-medium text-sm mb-1">{image.caption}</p>}
+                      {image.altText && <p className="text-xs text-gray-500 mb-2">{image.altText}</p>}
                       <div className="flex gap-2">
                         <button
                           onClick={() => {
                             setEditingImage(image._id);
-                            setEditData({ title: image.title || '', description: image.description || '' });
+                            setEditData({ caption: image.caption || '', altText: image.altText || '' });
                           }}
                           className="flex-1 px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200"
                         >

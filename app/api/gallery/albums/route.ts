@@ -11,10 +11,18 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const albums = await GalleryAlbumModel.find()
-      .sort({ order: 1 })
+      .sort({ sortOrder: 1 })
       .lean();
 
-    return NextResponse.json({ success: true, albums });
+    // Map database fields to API response fields
+    const albumsResponse = albums.map(album => ({
+      ...album,
+      _id: album._id.toString(),
+      coverImage: album.coverImageUrl,
+      order: album.sortOrder,
+    }));
+
+    return NextResponse.json({ success: true, albums: albumsResponse });
   } catch (error) {
     console.error('Error fetching albums:', error);
     return NextResponse.json(

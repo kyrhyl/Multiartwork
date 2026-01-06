@@ -1,11 +1,12 @@
 import { AlbumImagesContainer } from '@/features/gallery/containers/AlbumImagesContainer';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function AlbumImagesPage({ params }: PageProps) {
-  return <AlbumImagesContainer albumId={params.id} />;
+export default async function AlbumImagesPage({ params }: PageProps) {
+  const { id } = await params;
+  return <AlbumImagesContainer albumId={id} />;
 }

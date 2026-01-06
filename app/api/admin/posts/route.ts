@@ -38,9 +38,15 @@ export async function GET(request: NextRequest) {
 
     const total = await PostModel.countDocuments(filter);
 
+    // Map _id to string for each post
+    const postsResponse = posts.map(post => ({
+      ...post,
+      _id: post._id.toString(),
+    }));
+
     return NextResponse.json({
       success: true,
-      posts,
+      posts: postsResponse,
       pagination: {
         page,
         limit,
@@ -85,15 +91,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create post
+    // Create post - map fields to match schema
     const postData = {
-      ...validation.data,
+      title: validation.data.title,
+      slug: validation.data.slug,
+      excerpt: validation.data.excerpt || '',
+      contentHtml: validation.data.content,
+      coverImageUrl: validation.data.featuredImage,
+      tags: validation.data.tags || [],
+      status: validation.data.status,
       publishedAt: validation.data.status === 'published' ? new Date() : undefined,
     };
 
     const post = await PostModel.create(postData);
 
-    return NextResponse.json({ success: true, post }, { status: 201 });
+    // Convert to plain object and map fields for response
+    const plainPost = post.toObject();
+    const postResponse = {
+      _id: post._id.toString(),
+      title: plainPost.title,
+      slug: plainPost.slug,
+      excerpt: plainPost.excerpt,
+      content: plainPost.contentHtml,
+      featuredImage: plainPost.coverImageUrl || '',
+      tags: plainPost.tags,
+      status: plainPost.status,
+      publishedAt: plainPost.publishedAt,
+      createdAt: plainPost.createdAt,
+      updatedAt: plainPost.updatedAt,
+    };
+
+    return NextResponse.json({ success: true, post: postResponse }, { status: 201 });
   } catch (error) {
     console.error('Error creating post:', error);
     return NextResponse.json(

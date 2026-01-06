@@ -5,6 +5,7 @@ import { InputField, TextAreaField } from '@/shared/ui/FormFields';
 import { ImageUpload } from '@/shared/ui/ImageUpload';
 import { ServicesEditor } from '../ui/ServicesEditor';
 import { SocialLinksEditor } from '../ui/SocialLinksEditor';
+import { NavigationEditor } from '../ui/NavigationEditor';
 
 interface Service {
   title: string;
@@ -19,9 +20,12 @@ interface SocialLinks {
   linkedin?: string;
 }
 
+interface NavigationItem {
+  label: string;
+  href: string;
+}
+
 interface SettingsFormData {
-  companyName: string;
-  tagline: string;
   heroTitle: string;
   heroSubtitle: string;
   heroImage: string;
@@ -29,14 +33,12 @@ interface SettingsFormData {
   services: Service[];
   contactEmail: string;
   contactPhone: string;
-  contactAddress: string;
   socialLinks: SocialLinks;
+  navigationItems: NavigationItem[];
 }
 
 export function SettingsContainer() {
   const [formData, setFormData] = useState<SettingsFormData>({
-    companyName: '',
-    tagline: '',
     heroTitle: '',
     heroSubtitle: '',
     heroImage: '',
@@ -44,8 +46,14 @@ export function SettingsContainer() {
     services: [],
     contactEmail: '',
     contactPhone: '',
-    contactAddress: '',
     socialLinks: {},
+    navigationItems: [
+      { label: 'Home', href: '/' },
+      { label: 'Gallery', href: '/gallery' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
+    ],
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -66,8 +74,6 @@ export function SettingsContainer() {
 
       if (data.success && data.settings) {
         setFormData({
-          companyName: data.settings.companyName || '',
-          tagline: data.settings.tagline || '',
           heroTitle: data.settings.heroTitle || '',
           heroSubtitle: data.settings.heroSubtitle || '',
           heroImage: data.settings.heroImage || '',
@@ -75,8 +81,14 @@ export function SettingsContainer() {
           services: data.settings.services || [],
           contactEmail: data.settings.contactEmail || '',
           contactPhone: data.settings.contactPhone || '',
-          contactAddress: data.settings.contactAddress || '',
           socialLinks: data.settings.socialLinks || {},
+          navigationItems: data.settings.navigationItems || [
+            { label: 'Home', href: '/' },
+            { label: 'Gallery', href: '/gallery' },
+            { label: 'Blog', href: '/blog' },
+            { label: 'About', href: '/about' },
+            { label: 'Contact', href: '/contact' },
+          ],
         });
       }
     } catch (err) {
@@ -99,6 +111,10 @@ export function SettingsContainer() {
     setFormData((prev) => ({ ...prev, socialLinks }));
   };
 
+  const handleNavigationChange = (navigationItems: NavigationItem[]) => {
+    setFormData((prev) => ({ ...prev, navigationItems }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -106,16 +122,28 @@ export function SettingsContainer() {
     setIsSaving(true);
 
     try {
+      // Filter out empty services before sending
+      const cleanedFormData = {
+        ...formData,
+        services: formData.services.filter(s => s.title && s.description),
+      };
+
+      console.log('Sending settings:', cleanedFormData);
+
       const response = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(cleanedFormData),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to save settings');
+        console.error('Settings save failed:', data);
+        const errorMessage = data.error?.issues 
+          ? `Validation errors: ${data.error.issues.map((i: any) => `${i.path.join('.')}: ${i.message}`).join(', ')}`
+          : data.error?.message || 'Failed to save settings';
+        throw new Error(errorMessage);
       }
 
       setSuccessMessage('Settings saved successfully!');
@@ -148,28 +176,6 @@ export function SettingsContainer() {
           {successMessage}
         </div>
       )}
-
-      {/* General Information */}
-      <section className="bg-white p-6 rounded-lg shadow-sm space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">General Information</h2>
-        
-        <InputField
-          label="Company Name"
-          name="companyName"
-          value={formData.companyName}
-          onChange={handleInputChange}
-          required
-          disabled={isSaving}
-        />
-
-        <InputField
-          label="Tagline"
-          name="tagline"
-          value={formData.tagline}
-          onChange={handleInputChange}
-          disabled={isSaving}
-        />
-      </section>
 
       {/* Hero Section */}
       <section className="bg-white p-6 rounded-lg shadow-sm space-y-4">
@@ -244,15 +250,6 @@ export function SettingsContainer() {
           onChange={handleInputChange}
           disabled={isSaving}
         />
-
-        <TextAreaField
-          label="Contact Address"
-          name="contactAddress"
-          value={formData.contactAddress}
-          onChange={handleInputChange}
-          rows={3}
-          disabled={isSaving}
-        />
       </section>
 
       {/* Social Links */}
@@ -261,6 +258,19 @@ export function SettingsContainer() {
         <SocialLinksEditor
           socialLinks={formData.socialLinks}
           onChange={handleSocialLinksChange}
+          disabled={isSaving}
+        />
+      </section>
+
+      {/* Navigation Items */}
+      <section className="bg-white p-6 rounded-lg shadow-sm">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Navigation Menu</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Customize the navigation menu items that appear in the header of your website.
+        </p>
+        <NavigationEditor
+          navigationItems={formData.navigationItems}
+          onChange={handleNavigationChange}
           disabled={isSaving}
         />
       </section>

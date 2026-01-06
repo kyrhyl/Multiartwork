@@ -55,9 +55,9 @@ export function NewPostContainer() {
 
       setSuccessMessage('Post created successfully!');
       
-      // Redirect to edit page after short delay
+      // Redirect to posts list after short delay
       setTimeout(() => {
-        router.push(`/admin/posts/${data.post._id}/edit`);
+        router.push('/admin/posts');
       }, 1000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
