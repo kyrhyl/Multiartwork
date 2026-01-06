@@ -44,7 +44,14 @@ export default async function HomePage() {
                   key={idx}
                   className="p-6 rounded-xl bg-gray-50 dark:bg-[#101622] border border-gray-200 dark:border-gray-800 hover:border-primary transition-colors"
                 >
-                  <h3 className="font-semibold text-lg mb-2">{service}</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    {typeof service === 'string' ? service : service.title}
+                  </h3>
+                  {typeof service === 'object' && service.description && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                      {service.description}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
