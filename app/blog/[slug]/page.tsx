@@ -107,10 +107,10 @@ export default async function BlogPostPage({ params }: PageProps) {
           </header>
 
           {/* Featured Image */}
-          {post.coverImageUrl && (
+          {post.coverImage && (
             <div className="mb-8 rounded-lg overflow-hidden">
               <Image
-                src={post.coverImageUrl}
+                src={post.coverImage}
                 alt={post.title}
                 width={800}
                 height={450}
@@ -130,7 +130,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               prose-a:text-primary prose-a:no-underline hover:prose-a:underline
               prose-img:rounded-lg
               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic"
-            dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+            dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </div>
       </article>
