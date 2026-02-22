@@ -10,6 +10,7 @@ const albumSchema = z.object({
   description: z.string().optional(),
   coverImage: z.string().optional(),
   order: z.number().int().min(0).default(0),
+  serviceTags: z.array(z.string()).optional(),
 });
 
 /**
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
       _id: album._id.toString(),
       coverImage: album.coverImageUrl,
       order: album.sortOrder,
+      serviceTags: album.serviceTags || [],
     }));
 
     return NextResponse.json({ success: true, albums: albumsResponse });
@@ -93,6 +95,7 @@ export async function POST(request: NextRequest) {
       description: validation.data.description || '',
       coverImageUrl: validation.data.coverImage,
       sortOrder: validation.data.order,
+      serviceTags: validation.data.serviceTags || [],
     };
 
     const album = await GalleryAlbumModel.create(albumData);
@@ -103,6 +106,7 @@ export async function POST(request: NextRequest) {
       _id: album._id.toString(),
       coverImage: album.coverImageUrl,
       order: album.sortOrder,
+      serviceTags: album.serviceTags || [],
     };
 
     return NextResponse.json({ success: true, album: albumResponse }, { status: 201 });

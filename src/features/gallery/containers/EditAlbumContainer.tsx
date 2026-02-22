@@ -9,6 +9,7 @@ interface AlbumFormData {
   description: string;
   coverImage: string;
   order: number;
+  serviceTags: string[];
 }
 
 interface EditAlbumContainerProps {
@@ -22,8 +23,10 @@ export function EditAlbumContainer({ albumId }: EditAlbumContainerProps) {
     description: '',
     coverImage: '',
     order: 0,
+    serviceTags: [],
   });
 
+  const [availableServices, setAvailableServices] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +34,20 @@ export function EditAlbumContainer({ albumId }: EditAlbumContainerProps) {
 
   useEffect(() => {
     fetchAlbum();
+    fetchServices();
   }, [albumId]);
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      const data = await response.json();
+      if (data.success && data.settings?.services) {
+        setAvailableServices(data.settings.services.map((s: any) => s.title));
+      }
+    } catch (err) {
+      console.error('Failed to fetch services:', err);
+    }
+  };
 
   const fetchAlbum = async () => {
     try {
@@ -40,7 +56,7 @@ export function EditAlbumContainer({ albumId }: EditAlbumContainerProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to fetch album');
+        throw new Error(data.error?.message || 'Failed to fetch portfolio album');
       }
 
       setFormData({
@@ -49,9 +65,10 @@ export function EditAlbumContainer({ albumId }: EditAlbumContainerProps) {
         description: data.album.description || '',
         coverImage: data.album.coverImage || '',
         order: data.album.order || 0,
+        serviceTags: data.album.serviceTags || [],
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load album');
+      setError(err instanceof Error ? err.message : 'Failed to load portfolio album');
     } finally {
       setIsLoading(false);
     }
@@ -77,10 +94,10 @@ export function EditAlbumContainer({ albumId }: EditAlbumContainerProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to update album');
+        throw new Error(data.error?.message || 'Failed to update portfolio album');
       }
 
-      setSuccessMessage('Album updated successfully!');
+      setSuccessMessage('Portfolio album updated successfully!');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -108,18 +125,19 @@ export function EditAlbumContainer({ albumId }: EditAlbumContainerProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Edit Album</h1>
-        <p className="text-gray-600 mt-2">Update album details</p>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Portfolio Album</h1>
+        <p className="text-gray-600 mt-2">Update portfolio album details</p>
       </div>
 
       <AlbumForm
         formData={formData}
+        availableServices={availableServices}
         onChange={handleChange}
         onSubmit={handleSubmit}
         isLoading={isSaving}
         error={error}
         successMessage={successMessage}
-        submitLabel="Update Album"
+        submitLabel="Update Portfolio Album"
       />
     </div>
   );

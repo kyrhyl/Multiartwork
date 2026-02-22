@@ -10,10 +10,12 @@ interface AlbumFormData {
   description: string;
   coverImage: string;
   order: number;
+  serviceTags: string[];
 }
 
 interface AlbumFormProps {
   formData: AlbumFormData;
+  availableServices: string[];
   onChange: (field: keyof AlbumFormData, value: any) => void;
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
@@ -24,6 +26,7 @@ interface AlbumFormProps {
 
 export function AlbumForm({
   formData,
+  availableServices,
   onChange,
   onSubmit,
   isLoading,
@@ -37,6 +40,15 @@ export function AlbumForm({
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
     onChange('slug', slug);
+  };
+
+  const toggleServiceTag = (service: string) => {
+    const currentTags = formData.serviceTags || [];
+    if (currentTags.includes(service)) {
+      onChange('serviceTags', currentTags.filter(tag => tag !== service));
+    } else {
+      onChange('serviceTags', [...currentTags, service]);
+    }
   };
 
   return (
@@ -110,6 +122,34 @@ export function AlbumForm({
           onChange={(e) => onChange('order', parseInt(e.target.value) || 0)}
           disabled={isLoading}
         />
+
+        {availableServices.length > 0 && (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Related Services
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {availableServices.map((service) => (
+                <button
+                  key={service}
+                  type="button"
+                  onClick={() => toggleServiceTag(service)}
+                  disabled={isLoading}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    formData.serviceTags?.includes(service)
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {service}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500">
+              Click to select which services this album represents
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-end gap-4">

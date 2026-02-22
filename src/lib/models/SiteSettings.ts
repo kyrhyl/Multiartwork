@@ -10,6 +10,7 @@ export interface ISiteSettings {
     title: string;
     description: string;
     icon?: string;
+    imageUrl?: string;
   }[];
   contactEmail: string;
   contactPhone: string;
@@ -33,6 +34,7 @@ const SiteSettingsSchema = new Schema<ISiteSettings>({
     title: { type: String, required: true },
     description: { type: String, required: true },
     icon: { type: String },
+    imageUrl: { type: String },
   }],
   contactEmail: { type: String, required: true, default: 'info@example.com' },
   contactPhone: { type: String, required: true, default: '+1 234 567 8900' },

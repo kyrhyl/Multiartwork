@@ -7,6 +7,7 @@ export interface IGalleryAlbum {
   description: string;
   coverImageUrl?: string;
   sortOrder: number;
+  serviceTags: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,6 +18,7 @@ const GalleryAlbumSchema = new Schema<IGalleryAlbum>({
   description: { type: String, default: '' },
   coverImageUrl: { type: String },
   sortOrder: { type: Number, default: 0 },
+  serviceTags: [{ type: String }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

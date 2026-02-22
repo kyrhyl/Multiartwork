@@ -7,8 +7,8 @@ export async function Header() {
   
   const navigationItems = settings.navigationItems || [
     { label: 'Home', href: '/' },
-    { label: 'Gallery', href: '/gallery' },
-    { label: 'Blog', href: '/blog' },
+    { label: 'Portfolio', href: '/gallery' },
+    { label: 'Services', href: '/services' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ];

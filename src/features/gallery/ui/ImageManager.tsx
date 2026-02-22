@@ -88,7 +88,7 @@ export function ImageManager({ albumId, images, onRefresh }: ImageManagerProps) 
     <div className="space-y-6">
       {/* Add New Image */}
       <div className="bg-white p-6 rounded-lg shadow-sm">
-        <h3 className="font-semibold text-lg mb-4">Add New Image</h3>
+        <h3 className="font-semibold text-lg mb-4">Add New Portfolio Image</h3>
         <div className="space-y-4">
           <ImageUpload
             label="Upload Image"
@@ -108,9 +108,9 @@ export function ImageManager({ albumId, images, onRefresh }: ImageManagerProps) 
 
       {/* Images Grid */}
       <div>
-        <h3 className="font-semibold text-lg mb-4">Album Images ({images.length})</h3>
+        <h3 className="font-semibold text-lg mb-4">Portfolio Images ({images.length})</h3>
         {images.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No images in this album yet.</p>
+          <p className="text-gray-500 text-center py-8">No images in this portfolio album yet.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {images.map((image) => (
@@ -118,7 +118,7 @@ export function ImageManager({ albumId, images, onRefresh }: ImageManagerProps) 
                 <div className="aspect-square bg-gray-100">
                   <img
                     src={image.imageUrl}
-                    alt={image.caption || 'Gallery image'}
+                    alt={image.caption || 'Portfolio image'}
                     className="w-full h-full object-cover"
                   />
                 </div>

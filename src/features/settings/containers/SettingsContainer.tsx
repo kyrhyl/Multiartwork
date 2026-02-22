@@ -3,15 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { InputField, TextAreaField } from '@/shared/ui/FormFields';
 import { ImageUpload } from '@/shared/ui/ImageUpload';
-import { ServicesEditor } from '../ui/ServicesEditor';
 import { SocialLinksEditor } from '../ui/SocialLinksEditor';
 import { NavigationEditor } from '../ui/NavigationEditor';
-
-interface Service {
-  title: string;
-  description: string;
-  icon?: string;
-}
 
 interface SocialLinks {
   facebook?: string;
@@ -30,7 +23,6 @@ interface SettingsFormData {
   heroSubtitle: string;
   heroImage: string;
   aboutText: string;
-  services: Service[];
   contactEmail: string;
   contactPhone: string;
   socialLinks: SocialLinks;
@@ -43,7 +35,6 @@ export function SettingsContainer() {
     heroSubtitle: '',
     heroImage: '',
     aboutText: '',
-    services: [],
     contactEmail: '',
     contactPhone: '',
     socialLinks: {},
@@ -78,7 +69,6 @@ export function SettingsContainer() {
           heroSubtitle: data.settings.heroSubtitle || '',
           heroImage: data.settings.heroImage || '',
           aboutText: data.settings.aboutText || '',
-          services: data.settings.services || [],
           contactEmail: data.settings.contactEmail || '',
           contactPhone: data.settings.contactPhone || '',
           socialLinks: data.settings.socialLinks || {},
@@ -103,10 +93,6 @@ export function SettingsContainer() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleServicesChange = (services: Service[]) => {
-    setFormData((prev) => ({ ...prev, services }));
-  };
-
   const handleSocialLinksChange = (socialLinks: SocialLinks) => {
     setFormData((prev) => ({ ...prev, socialLinks }));
   };
@@ -122,18 +108,12 @@ export function SettingsContainer() {
     setIsSaving(true);
 
     try {
-      // Filter out empty services before sending
-      const cleanedFormData = {
-        ...formData,
-        services: formData.services.filter(s => s.title && s.description),
-      };
-
-      console.log('Sending settings:', cleanedFormData);
+      console.log('Sending settings:', formData);
 
       const response = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cleanedFormData),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -215,16 +195,6 @@ export function SettingsContainer() {
           value={formData.aboutText}
           onChange={handleInputChange}
           rows={6}
-          disabled={isSaving}
-        />
-      </section>
-
-      {/* Services */}
-      <section className="bg-white p-6 rounded-lg shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Services</h2>
-        <ServicesEditor
-          services={formData.services}
-          onChange={handleServicesChange}
           disabled={isSaving}
         />
       </section>

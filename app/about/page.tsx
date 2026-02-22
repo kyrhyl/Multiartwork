@@ -20,10 +20,15 @@ export default async function AboutPage() {
             
             <h2 className="text-2xl font-bold mt-8 mb-4">Our Services</h2>
             <ul className="space-y-2">
-              {settings.services.map((service: string, idx: number) => (
+              {settings.services.map((service: any, idx: number) => (
                 <li key={idx} className="flex items-start gap-2">
                   <span className="text-primary mt-1">✓</span>
-                  <span>{service}</span>
+                  <div>
+                    <span className="font-medium">{service.title || service}</span>
+                    {service.description && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{service.description}</p>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>

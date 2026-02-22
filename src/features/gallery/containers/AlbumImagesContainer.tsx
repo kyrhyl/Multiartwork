@@ -42,7 +42,7 @@ export function AlbumImagesContainer({ albumId }: AlbumImagesContainerProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to fetch album');
+        throw new Error(data.error?.message || 'Failed to fetch portfolio album');
       }
 
       setAlbum(data.album);
@@ -65,7 +65,7 @@ export function AlbumImagesContainer({ albumId }: AlbumImagesContainerProps) {
   if (error || !album) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        {error || 'Album not found'}
+        {error || 'Portfolio album not found'}
       </div>
     );
   }
@@ -76,18 +76,18 @@ export function AlbumImagesContainer({ albumId }: AlbumImagesContainerProps) {
         <div>
           <div className="flex items-center gap-3">
             <Link href="/admin/gallery" className="text-primary hover:text-blue-700">
-              ← Albums
+              ← Portfolio
             </Link>
             <span className="text-gray-400">/</span>
             <h1 className="text-3xl font-bold text-gray-900">{album.title}</h1>
           </div>
-          <p className="text-gray-600 mt-2">Manage images in this album</p>
+          <p className="text-gray-600 mt-2">Manage images in this portfolio album</p>
         </div>
         <Link
           href={`/admin/gallery/albums/${albumId}/edit`}
           className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
         >
-          Edit Album Details
+          Edit Portfolio Album Details
         </Link>
       </div>
 

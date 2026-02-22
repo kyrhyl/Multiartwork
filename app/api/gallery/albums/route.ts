@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
       description: album.description,
       coverImageUrl: album.coverImageUrl,
       sortOrder: album.sortOrder,
+      serviceTags: album.serviceTags || [],
     }));
 
     return NextResponse.json({ success: true, albums: albumsResponse });

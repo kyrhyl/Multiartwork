@@ -11,6 +11,7 @@ const albumSchema = z.object({
   description: z.string().optional(),
   coverImage: z.string().optional(),
   order: z.number().int().min(0).default(0),
+  serviceTags: z.array(z.string()).optional(),
 });
 
 interface Params {
@@ -57,6 +58,7 @@ export async function GET(request: NextRequest, { params }: Params) {
       _id: album._id.toString(),
       coverImage: album.coverImageUrl,
       order: album.sortOrder,
+      serviceTags: album.serviceTags || [],
       images: images.map(img => ({
         ...img,
         _id: img._id.toString(),
@@ -130,6 +132,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       description: validation.data.description || '',
       coverImageUrl: validation.data.coverImage,
       sortOrder: validation.data.order,
+      serviceTags: validation.data.serviceTags || [],
     };
 
     const album = await GalleryAlbumModel.findByIdAndUpdate(resolvedParams.id, updateData, {
@@ -143,6 +146,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       _id: album!._id.toString(),
       coverImage: album!.coverImageUrl,
       order: album!.sortOrder,
+      serviceTags: album!.serviceTags || [],
     };
 
     return NextResponse.json({ success: true, album: albumResponse });

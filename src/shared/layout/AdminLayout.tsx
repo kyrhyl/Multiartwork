@@ -13,8 +13,8 @@ type NavItem = {
 const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: '📊' },
   { label: 'Site Settings', href: '/admin/settings', icon: '⚙️' },
-  { label: 'Posts', href: '/admin/posts', icon: '📝' },
-  { label: 'Gallery', href: '/admin/gallery', icon: '🖼️' },
+  { label: 'Services', href: '/admin/services', icon: '🎯' },
+  { label: 'Portfolio', href: '/admin/gallery', icon: '🖼️' },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

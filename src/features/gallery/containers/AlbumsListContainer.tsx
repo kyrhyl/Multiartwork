@@ -32,7 +32,7 @@ export function AlbumsListContainer() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to fetch albums');
+        throw new Error(data.error?.message || 'Failed to fetch portfolio albums');
       }
 
       setAlbums(data.albums);
@@ -53,12 +53,12 @@ export function AlbumsListContainer() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to delete album');
+        throw new Error(data.error?.message || 'Failed to delete portfolio album');
       }
 
       setAlbums((prev) => prev.filter((album) => album._id !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete album');
+      alert(err instanceof Error ? err.message : 'Failed to delete portfolio album');
     } finally {
       setIsDeleting(null);
     }
@@ -68,14 +68,14 @@ export function AlbumsListContainer() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gallery Albums</h1>
-          <p className="text-gray-600 mt-2">Manage your photo gallery albums</p>
+          <h1 className="text-3xl font-bold text-gray-900">Portfolio</h1>
+          <p className="text-gray-600 mt-2">Manage your portfolio albums</p>
         </div>
         <Link
           href="/admin/gallery/albums/new"
           className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-700 font-medium"
         >
-          + New Album
+          + New Portfolio Album
         </Link>
       </div>
 

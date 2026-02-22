@@ -22,12 +22,12 @@ export function AlbumsGrid({ albums, onDelete, isDeleting }: AlbumsGridProps) {
   if (albums.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-        <p className="text-gray-500 mb-4">No albums found.</p>
+        <p className="text-gray-500 mb-4">No portfolio albums found.</p>
         <Link
           href="/admin/gallery/albums/new"
           className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-700"
         >
-          Create Your First Album
+          Create Your First Portfolio Album
         </Link>
       </div>
     );

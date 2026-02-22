@@ -7,15 +7,15 @@ export const metadata = {
 
 export default function DashboardPage() {
   const stats = [
-    { label: 'Total Posts', value: '3', change: '+2 this month', icon: '📝' },
-    { label: 'Gallery Albums', value: '3', change: 'All categories', icon: '🖼️' },
-    { label: 'Total Images', value: '2', change: 'In gallery', icon: '📷' },
-    { label: 'Published Posts', value: '2', change: '1 draft', icon: '✅' },
+    { label: 'Total Services', value: '3', change: '+2 this month', icon: '📝' },
+    { label: 'Portfolio Albums', value: '3', change: 'All categories', icon: '🖼️' },
+    { label: 'Total Images', value: '2', change: 'In portfolio', icon: '📷' },
+    { label: 'Published Services', value: '2', change: '1 draft', icon: '✅' },
   ];
 
   const quickActions = [
-    { label: 'Create Post', href: '/admin/posts/new', icon: '➕', color: 'bg-blue-500' },
-    { label: 'Add Album', href: '/admin/gallery/albums/new', icon: '🖼️', color: 'bg-green-500' },
+    { label: 'Create Service', href: '/admin/posts/new', icon: '➕', color: 'bg-blue-500' },
+    { label: 'Add Portfolio Album', href: '/admin/gallery/albums/new', icon: '🖼️', color: 'bg-green-500' },
     { label: 'Site Settings', href: '/admin/settings', icon: '⚙️', color: 'bg-purple-500' },
   ];
 
@@ -25,7 +25,7 @@ export default function DashboardPage() {
       <div className="bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-8 text-white">
         <h2 className="text-2xl font-bold mb-2">Welcome back! 👋</h2>
         <p className="text-blue-100">
-          Manage your portfolio content, gallery, and blog posts from here.
+          Manage your portfolio content and services from here.
         </p>
       </div>
 
@@ -96,7 +96,7 @@ export default function DashboardPage() {
             <div>
               <h4 className="font-medium mb-1">Manage content</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Edit <Link href="/admin/posts" className="text-primary hover:underline">Posts</Link> and <Link href="/admin/gallery" className="text-primary hover:underline">Gallery</Link> from the sidebar.
+                Edit <Link href="/admin/posts" className="text-primary hover:underline">Services</Link> and <Link href="/admin/gallery" className="text-primary hover:underline">Portfolio</Link> from the sidebar.
               </p>
             </div>
           </div>
