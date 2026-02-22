@@ -16,10 +16,12 @@ export async function GET(request: NextRequest) {
 
     // Map database fields to API response fields
     const albumsResponse = albums.map(album => ({
-      ...album,
       _id: album._id.toString(),
-      coverImage: album.coverImageUrl,
-      order: album.sortOrder,
+      slug: album.slug,
+      title: album.title,
+      description: album.description,
+      coverImageUrl: album.coverImageUrl,
+      sortOrder: album.sortOrder,
     }));
 
     return NextResponse.json({ success: true, albums: albumsResponse });

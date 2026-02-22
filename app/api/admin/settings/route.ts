@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { SiteSettingsModel } from '@/lib/models/SiteSettings';
+import { verifyAdminAuth } from '@/lib/auth';
 import { z } from 'zod';
 
 // Validation schema for site settings
@@ -32,7 +33,16 @@ const settingsSchema = z.object({
  * PUT /api/admin/settings
  * Update site settings (admin only)
  */
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await request.json();
     

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { GalleryAlbumModel } from '@/lib/models/GalleryAlbum';
 import { GalleryImageModel } from '@/lib/models/GalleryImage';
+import { verifyAdminAuth } from '@/lib/auth';
 import { z } from 'zod';
 
 const albumSchema = z.object({
@@ -23,6 +24,15 @@ interface Params {
  * Fetch a single album by ID with its images
  */
 export async function GET(request: NextRequest, { params }: Params) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const resolvedParams = await params;
     await connectDB();
@@ -69,6 +79,15 @@ export async function GET(request: NextRequest, { params }: Params) {
  * Update an album
  */
 export async function PUT(request: NextRequest, { params }: Params) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const resolvedParams = await params;
     const body = await request.json();
@@ -141,6 +160,15 @@ export async function PUT(request: NextRequest, { params }: Params) {
  * Delete an album and all its images
  */
 export async function DELETE(request: NextRequest, { params }: Params) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const resolvedParams = await params;
     await connectDB();

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { GalleryAlbumModel } from '@/lib/models/GalleryAlbum';
+import { verifyAdminAuth } from '@/lib/auth';
 import { z } from 'zod';
 
 const albumSchema = z.object({
@@ -15,7 +16,16 @@ const albumSchema = z.object({
  * GET /api/admin/gallery/albums
  * Fetch all albums for admin
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     await connectDB();
 
@@ -44,6 +54,15 @@ export async function GET() {
  * Create a new album
  */
 export async function POST(request: NextRequest) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await request.json();
 

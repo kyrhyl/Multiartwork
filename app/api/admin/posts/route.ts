@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { PostModel } from '@/lib/models/Post';
+import { verifyAdminAuth } from '@/lib/auth';
 import { z } from 'zod';
 
 // Validation schema for post
@@ -19,6 +20,15 @@ const postSchema = z.object({
  * Fetch all posts (including drafts) for admin
  */
 export async function GET(request: NextRequest) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     await connectDB();
 
@@ -68,6 +78,15 @@ export async function GET(request: NextRequest) {
  * Create a new post
  */
 export async function POST(request: NextRequest) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await request.json();
 

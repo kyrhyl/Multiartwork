@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { PostModel } from '@/lib/models/Post';
+import { verifyAdminAuth } from '@/lib/auth';
 import { z } from 'zod';
 
 const postSchema = z.object({
@@ -24,6 +25,15 @@ interface Params {
  * Fetch a single post by ID
  */
 export async function GET(request: NextRequest, { params }: Params) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const resolvedParams = await params;
     await connectDB();
@@ -60,6 +70,15 @@ export async function GET(request: NextRequest, { params }: Params) {
  * Update a post
  */
 export async function PUT(request: NextRequest, { params }: Params) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const resolvedParams = await params;
     const body = await request.json();
@@ -138,6 +157,15 @@ export async function PUT(request: NextRequest, { params }: Params) {
  * Delete a post
  */
 export async function DELETE(request: NextRequest, { params }: Params) {
+  // Verify admin authentication
+  const auth = await verifyAdminAuth(request);
+  if (!auth) {
+    return NextResponse.json(
+      { success: false, error: { message: 'Unauthorized' } },
+      { status: 401 }
+    );
+  }
+
   try {
     const resolvedParams = await params;
     await connectDB();
